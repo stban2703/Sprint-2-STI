@@ -49,36 +49,25 @@ function calculateSimilarity() {
         return elem.Nombre == personBselect.value;
     });
 
-    let dotProduct =
-        (personA.a * personB.a) +
-        (personA.b * personB.b) +
-        (personA.c * personB.c) +
-        (personA.d * personB.d) +
-        (personA.e * personB.e);
+    let personProps = Object.keys(personA);
+    let dotProduct = 0;
+    let magnitudeA = 0;
+    let magnitudeB = 0;
+    let cosineSimilarity = 0;
 
-    let magnitudeA =
-        Math.sqrt(
-            Math.pow(personA.a, 2) +
-            Math.pow(personA.b, 2) +
-            Math.pow(personA.c, 2) +
-            Math.pow(personA.d, 2) +
-            Math.pow(personA.e, 2)
-        );
-
-    let magnitudeB =
-        Math.sqrt(
-            Math.pow(personB.a, 2) +
-            Math.pow(personB.b, 2) +
-            Math.pow(personB.c, 2) +
-            Math.pow(personB.d, 2) +
-            Math.pow(personB.e, 2)
-        );
-
-    let cosineSimilarity = dotProduct / (magnitudeA * magnitudeB);
-    result = cosineSimilarity.toFixed(3);
+    for (let i = 1; i < personProps.length; i++) {
+        let prop = personProps[i];
+        dotProduct += (personA[prop] * personB[prop]);
+        magnitudeA += Math.pow(personA[prop], 2);
+        magnitudeB += Math.pow(personB[prop], 2);
+    }
+    
+    cosineSimilarity = dotProduct / (Math.sqrt(magnitudeA) * Math.sqrt(magnitudeB));
+    result = cosineSimilarity.toFixed(2);
     renderResult();
 }
 
 function renderResult() {
     resultFIeld.value = result;
+    //resultFIeld.value = (result * 100).toString() + "%";
 }
