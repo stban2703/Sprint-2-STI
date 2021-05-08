@@ -24,7 +24,13 @@ Papa.parse(url, {
 
 comparisonForm.addEventListener('submit', event => {
     event.preventDefault();
-    calculateSimilarity();
+    let personA = getPersonFromList(personAselect.value);
+    let personB = getPersonFromList(personBselect.value);
+    let dotProduct = getDotProduct(personA, personB);
+    let magnitudeA = getMagnitude(personA);
+    let magnitudeB = getMagnitude(personB);
+    let cosineSimilarity = getCosineSimilarity(dotProduct, magnitudeA, magnitudeB);
+    renderResult(cosineSimilarity);
 })
 
 function renderNameOptions() {
@@ -40,34 +46,38 @@ function renderNameOptions() {
     });
 }
 
-function calculateSimilarity() {
-    let personA = data.find(elem => {
-        return elem.Nombre == personAselect.value;
+function getPersonFromList(value) {
+    let person = data.find(elem => {
+        return elem.Nombre == value;
     });
-
-    let personB = data.find(elem => {
-        return elem.Nombre == personBselect.value;
-    });
-
-    let personProps = Object.keys(personA);
-    let dotProduct = 0;
-    let magnitudeA = 0;
-    let magnitudeB = 0;
-    let cosineSimilarity = 0;
-
-    for (let i = 1; i < personProps.length; i++) {
-        let prop = personProps[i];
-        dotProduct += (personA[prop] * personB[prop]);
-        magnitudeA += Math.pow(personA[prop], 2);
-        magnitudeB += Math.pow(personB[prop], 2);
-    }
-    
-    cosineSimilarity = dotProduct / (Math.sqrt(magnitudeA) * Math.sqrt(magnitudeB));
-    result = cosineSimilarity.toFixed(2);
-    renderResult();
+    return person;
 }
 
-function renderResult() {
-    resultFIeld.value = result;
-    //resultFIeld.value = (result * 100).toString() + "%";
+function getDotProduct(elemA, elemB) {
+    let dotProduct = 0;
+    let elemProps = Object.keys(elemA)
+    for (let i = 1; i < elemProps.length; i++) {
+        let prop = elemProps[i];
+        dotProduct += (elemA[prop] * elemB[prop]);
+    }
+    return dotProduct;
+}
+
+function getMagnitude(elem) {
+    let magnitude = 0;
+    let elemProps = Object.keys(elem);
+    for (let i = 1; i < elemProps.length; i++) {
+        let prop = elemProps[i];
+        magnitude += Math.pow(elem[prop], 2);
+    }
+    return Math.sqrt(magnitude);
+}
+
+function getCosineSimilarity(dotProduct, magnitudeA, magnitudeB) {
+    let cosineSimilarity = dotProduct / (magnitudeA * magnitudeB);
+    return cosineSimilarity;
+}
+
+function renderResult(result) {
+    resultFIeld.value = (result.toFixed(2) * 100).toString() + "%";
 }
